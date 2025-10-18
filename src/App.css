@@ -54,7 +54,7 @@
 }
 
 body {
-  background-color: #60101d;
+  background-color: blue;
  
 }
 .templelogo {
@@ -105,7 +105,7 @@ body {
 .card {
   padding: 2em;
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: px;
   box-shadow: 0 4px 6px rgba(224, 192, 192, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -130,7 +130,7 @@ body {
 
 .container > div {
   padding: 50px;
-  border-style: solid;
+  border-style: dashed !important;
   border: 3px solid #ffffff;
   border-color: #ffffff;
   border-radius: 9px;

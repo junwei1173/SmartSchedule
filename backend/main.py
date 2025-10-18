@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from utils.algorithm import generateSchedules
 from utils.fetch import fetch_courses, get_all_courses, get_all_subjects
 from typing import Optional
+import httpx
 
 app = FastAPI()
 
@@ -83,3 +84,33 @@ def generate_schedule(data: CourseRequest):
         [course.dict() for course in data.courses],
         [restriction.dict() for restriction in data.restrictions],
     )
+
+@app.get("/api/reddit/top-post", description="Get top post from r/Temple")
+async def get_reddit_top_post():
+    try:
+        async with httpx.AsyncClient() as client:
+            headers = {
+                'User-Agent': 'SmartSchedule/1.0'
+            }
+            
+            # Try different time periods: hour, day, week
+            time_periods = ['hour', 'day', 'week']
+            
+            for period in time_periods:
+                response = await client.get(
+                    f'https://www.reddit.com/r/Temple/top.json?t={period}&limit=1',
+                    headers=headers,
+                    timeout=10.0
+                )
+                response.raise_for_status()
+                data = response.json()
+                
+                posts = data.get('data', {}).get('children', [])
+                if posts and len(posts) > 0:
+                    post_data = posts[0]['data']
+                    post_data['time_period'] = period  # Add which time period was used
+                    return {"post": post_data}
+            
+            return {"error": "No posts found"}
+    except Exception as e:
+        return {"error": str(e)}
